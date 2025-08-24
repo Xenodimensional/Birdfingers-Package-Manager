@@ -45,7 +45,7 @@ A friendly, local **web UI** for managing Python packages in **virtual environme
 
 ## 🚀 Run
 
-Place `birdfingers_pkgmgr.py` next to `python.exe` (or run it with your preferred Python):
+Place `birdfingers_pkgmgr.py` next to `python.exe` (or run it with your preferred Python): Use the 'birdfingers.bat' file to launch on Windows.
 
 ```bash
 python birdfingers_pkgmgr.py
