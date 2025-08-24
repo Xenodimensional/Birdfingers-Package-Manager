@@ -6,6 +6,8 @@ A friendly, local **web UI** for managing Python packages in **virtual environme
 - **Works in venv _and_ python_embedded** (with helpers to enable `site-packages` and bootstrap `pip`).
 - **Snapshots**: freeze, preview vs current, diff A↔B, restore.
 
+- CC0 License. If you can make it better, please do! 
+
 ---
 
 ## ✨ Features
@@ -50,3 +52,4 @@ Place `birdfingers_pkgmgr.py` next to `python.exe` (or run it with your preferre
 ```bash
 python birdfingers_pkgmgr.py
 # opens http://127.0.0.1:8765/
+
