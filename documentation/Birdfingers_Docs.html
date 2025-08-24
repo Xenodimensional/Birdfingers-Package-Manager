@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Birdfingers Package Manager — User Guide</title>
+<style>
+  :root{
+    --bg:#0b1020; --card:#11162a; --fg:#e3ecff; --muted:#a6b0c3; --line:#233147;
+    --accent:#38bdf8; --ok:#34d399; --warn:#fbbf24; --danger:#f87171;
+    --code:#0b1228; --code-border:#1f2a44;
+    --shadow: 0 10px 30px rgba(0,0,0,.3);
+  }
+  .light{
+    --bg:#f7f8fc; --card:#ffffff; --fg:#0f172a; --muted:#475569; --line:#e5e7eb;
+    --accent:#0ea5e9; --ok:#059669; --warn:#b45309; --danger:#ef4444;
+    --code:#0f172a; --code-border:#d1d5db;
+    --shadow: 0 10px 30px rgba(0,0,0,.08);
+  }
+
+  html,body { margin:0; background:var(--bg); color:var(--fg); font: 16px/1.6 system-ui, Segoe UI, Roboto, Arial, sans-serif; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 24px 16px 80px; }
+  header { position: sticky; top: 0; z-index: 3; background: var(--bg); border-bottom: 1px solid var(--line); }
+  header .bar { display:flex; align-items:center; gap:12px; justify-content:space-between; padding: 14px 16px; }
+  h1 { font-size: 28px; margin: 16px 0; }
+  h2 { font-size: 22px; margin: 28px 0 12px; }
+  h3 { font-size: 18px; margin: 22px 0 8px; }
+  p { margin: 10px 0; }
+  .muted { color: var(--muted); }
+  .pill { display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; background:var(--card); border:1px solid var(--line); }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; box-shadow: var(--shadow); }
+  .btn:hover{ transform: translateY(-1px); }
+  .primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .ok { color: var(--ok); }
+  .warn { color: var(--warn); }
+  .callout { border:1px solid var(--line); background:var(--card); border-radius:12px; padding:14px; box-shadow: var(--shadow); }
+  .grid { display:grid; gap:16px; }
+  @media(min-width: 900px){ .grid.two { grid-template-columns: 1fr 1fr; } }
+  figure { margin: 16px 0; border:1px solid var(--line); background:var(--card); border-radius:12px; overflow:hidden; box-shadow: var(--shadow); }
+  figure img { width:100%; height:auto; display:block; }
+  figcaption { padding: 8px 12px; font-size: 14px; color: var(--muted); border-top:1px solid var(--line); background: rgba(255,255,255,0.02); }
+  .toc { padding: 12px; border:1px solid var(--line); border-radius:12px; background:var(--card); box-shadow: var(--shadow); }
+  .toc a { color: var(--fg); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  pre { background: var(--code); color: #cfe8ff; border:1px solid var(--code-border); padding: 12px; border-radius: 8px; overflow:auto; }
+  kbd { background: var(--card); border:1px solid var(--line); padding:1px 6px; border-radius:6px; font-size: 90%; box-shadow: var(--shadow); }
+  footer { margin-top: 48px; padding: 24px 0; border-top:1px solid var(--line); color:var(--muted); }
+  .tags { display:flex; gap:8px; flex-wrap:wrap; }
+  .badge { background: var(--card); border:1px solid var(--line); padding:2px 8px; border-radius:999px; font-size:12px; }
+</style>
+<script>
+  // Dark mode: default = dark. Persist selection.
+  (function(){
+    try{
+      const saved = localStorage.getItem('bf_docs_theme'); // 'dark' or 'light'
+      if(saved === 'light'){
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    }catch(e){}
+  })();
+  function toggleTheme(){
+    const el = document.documentElement;
+    const isDark = el.classList.contains('dark');
+    if(isDark){
+      el.classList.remove('dark'); el.classList.add('light');
+      localStorage.setItem('bf_docs_theme','light');
+    }else{
+      el.classList.add('dark'); el.classList.remove('light');
+      localStorage.setItem('bf_docs_theme','dark');
+    }
+  }
+</script>
+</head>
+<body>
+<header>
+  <div class="bar container">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span class="pill">🐦 <strong>Birdfingers Package Manager</strong> — User Guide</span>
+      <span class="badge">v1 (web UI)</span>
+    </div>
+    <button class="btn" onclick="toggleTheme()" title="Toggle dark/light">🌗 Toggle theme</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 id="top">Welcome</h1>
+  <p>
+    <strong>Birdfingers</strong> is a simple, friendly package manager for Python virtual environments and
+    <em>Windows embedded Python</em> (“python_embedded”). It runs a local web page where you can:
+  </p>
+  <ul>
+    <li>List installed packages and versions</li>
+    <li>Select multiple packages for actions (details, uninstall, install specific version)</li>
+    <li>Search PyPI and install exact versions</li>
+    <li>Save <em>snapshots</em> of your environment, preview differences, and restore later</li>
+    <li>See live pip output and detailed logs</li>
+  </ul>
+
+  <div class="grid two" style="margin:18px 0;">
+    <div class="toc">
+      <strong>Table of contents</strong>
+      <ol>
+        <li><a href="#requirements">Requirements</a></li>
+        <li><a href="#run">How to run</a></li>
+        <li><a href="#layout">UI layout</a></li>
+        <li><a href="#packages">Packages tab</a></li>
+        <li><a href="#install">Install tab</a></li>
+        <li><a href="#snapshots">Snapshots tab</a></li>
+        <li><a href="#actions">Actions & Output (bottom bar)</a></li>
+        <li><a href="#logging">Logs, snapshots & file locations</a></li>
+        <li><a href="#embedded">Using with Windows embedded Python</a></li>
+        <li><a href="#tips">Tips, safety & troubleshooting</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ol>
+    </div>
+    <div class="callout">
+      <strong>Quick facts</strong>
+      <ul>
+        <li>Runs locally at <code>http://127.0.0.1:8765/</code> (default port).</li>
+        <li>Dark mode by default (matches the app). Use the 🌗 button to toggle.</li>
+        <li>Works in regular venvs and Windows <em>python_embedded</em>.</li>
+      </ul>
+      <div class="tags">
+        <span class="badge">Beginner-friendly</span>
+        <span class="badge">No extra installs</span>
+        <span class="badge">PyPI lookup</span>
+        <span class="badge">Snapshot/restore</span>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="requirements">1) Requirements</h2>
+  <ul>
+    <li>Python 3.8+ (works in a virtual environment <em>or</em> Windows embedded Python).</li>
+    <li><strong>pip</strong> available. If not, the UI has a button: <em>Check / install pip</em>.</li>
+    <li>For PyPI searches or version lists, you need an internet connection.</li>
+  </ul>
+
+  <h2 id="run">2) How to run</h2>
+  <ol>
+    <li>Put <code>birdfingers_pkgmgr.py</code> next to your <code>python.exe</code> (or just run it with your desired Python).</li>
+    <li>(Optional) Activate your venv if you want to manage that environment.</li>
+    <li>Run:
+      <pre>python birdfingers_pkgmgr.py</pre>
+      It opens a browser tab at <code>http://127.0.0.1:8765/</code>.
+    </li>
+    <li>To change the port:
+      <pre>python birdfingers_pkgmgr.py --port 8888</pre>
+    </li>
+  </ol>
+
+  <h2 id="layout">3) UI layout</h2>
+  <p>The interface has a <strong>fixed top bar</strong> (tabs & controls), a scrollable content area, and a <strong>fixed bottom bar</strong> with actions and live output.</p>
+  <ul>
+    <li><strong>Top bar:</strong> Mode (venv/embedded/system), Python path, port, theme toggle, tools for embedded Python, and tabs (Packages / Install / Snapshots).</li>
+    <li><strong>Content area:</strong> The current tab’s tools and tables, with sticky table headers that never scroll under the top bar.</li>
+    <li><strong>Bottom bar:</strong> “Selected” package chips, action buttons (details/uninstall/install version), and a live Output panel.</li>
+  </ul>
+
+  <figure>
+    <img src="Packages.png" alt="Packages tab screenshot" />
+    <figcaption>Packages tab: search, select, details, uninstall, and load versions.</figcaption>
+  </figure>
+
+  <h2 id="packages">4) Packages tab</h2>
+  <p>This tab lists every package in the current Python environment.</p>
+  <ul>
+    <li><strong>Search</strong> — filter by name as you type.</li>
+    <li><strong>Select</strong> — adds the package to the action row as a chip. You can select multiple.</li>
+    <li><strong>Details</strong> — shows <code>pip show -f &lt;package&gt;</code> in the Output panel.</li>
+    <li><strong>Uninstall</strong> — removes that package (prompts for confirmation).</li>
+    <li><strong>Load versions</strong> — fetches available versions from PyPI and prepares the bottom “Install version” picker.</li>
+  </ul>
+  <p><strong>Active package:</strong> In the bottom bar, click a chip to set the active package. The version drop-down applies to the active package. Click the <kbd>×</kbd> on a chip to deselect it.</p>
+
+  <h2 id="install">5) Install tab</h2>
+  <p>Search for packages on PyPI and install specific versions.</p>
+  <ul>
+    <li><strong>Package name</strong> — type a name (e.g., <code>requests</code>) and click <em>Search PyPI</em>.</li>
+    <li><strong>Results</strong> — shows summary, latest version, and the full version list (latest first).</li>
+    <li><strong>Install latest</strong> — installs the newest release.</li>
+    <li><strong>Install selected</strong> — installs whichever version you’ve chosen in the drop-down. You can paste a full spec like <code>package==1.2.3</code> into the name box too.</li>
+  </ul>
+  <p>All installs stream pip output to the Output panel and refresh the package list when done.</p>
+
+  <figure>
+    <img src="Install.png" alt="Install tab screenshot" />
+    <figcaption>Install tab: search PyPI and install exact versions.</figcaption>
+  </figure>
+
+  <h2 id="snapshots">6) Snapshots tab</h2>
+  <p>Snapshots capture your environment (similar to <code>pip freeze</code>) so you can preview differences or restore later.</p>
+  <ul>
+    <li><strong>Save snapshot</strong> — adds a snapshot with optional <em>Name</em> and <em>Comment</em>.</li>
+    <li><strong>Preview</strong> — compare a snapshot to your current environment. The Output panel lists packages to install/upgrade and to uninstall, plus suggested commands.</li>
+    <li><strong>Restore</strong> — runs <code>pip install -r &lt;requirements.txt&gt;</code> for that snapshot.</li>
+    <li><strong>View</strong> — shows the <code>requirements.txt</code> content in the Output panel.</li>
+    <li><strong>Download</strong> — downloads the snapshot’s <code>requirements.txt</code>.</li>
+    <li><strong>Delete</strong> — removes a snapshot (meta + requirements file).</li>
+    <li><strong>Diff A ↔ B</strong> — choose two snapshots to see what would change from A to B.</li>
+  </ul>
+  <p class="muted">Note: Snapshot preview uses exact <code>==</code> pins from <code>pip freeze</code>. Actual <em>dependency resolution</em> on install may still adjust sub-dependencies.</p>
+
+  <figure>
+    <img src="Snapshots.png" alt="Snapshots tab screenshot" />
+    <figcaption>Snapshots tab: save, preview, restore, view, download, delete, and diff.</figcaption>
+  </figure>
+
+  <h2 id="actions">7) Actions & Output (bottom bar)</h2>
+  <ul>
+    <li><strong>Selected</strong> — shows chips for packages you’ve selected. Click a chip to make it “active.” Press <kbd>×</kbd> to remove.</li>
+    <li><strong>Show details</strong> — runs <code>pip show -f</code> for all selected packages.</li>
+    <li><strong>Uninstall selected</strong> — uninstalls everything you’ve selected (with confirmation).</li>
+    <li><strong>Load versions</strong> — fetches version list from PyPI for the <em>active</em> package.</li>
+    <li><strong>Install version</strong> — installs the chosen version for the active package.</li>
+    <li><strong>Output</strong> — live command output, including job id/state. Autoscrolls as pip prints.</li>
+  </ul>
+
+  <h2 id="logging">8) Logs, snapshots & file locations</h2>
+  <ul>
+    <li><strong>Data directory</strong> — by default: writable location near your Python. You can override with <code>BIRDFINGERS_DATA_DIR</code> environment variable.</li>
+    <li><strong>Logs</strong><br>
+      Text log: <code>birdfingers.log</code><br>
+      JSONL audit: <code>birdfingers_audit.jsonl</code>
+    </li>
+    <li><strong>Snapshots</strong><br>
+      Folder: <code>birdfingers_snapshots/</code><br>
+      Each snapshot has <code>.json</code> metadata and matching <code>.txt</code> requirements file.
+    </li>
+    <li><strong>Port</strong> — default <code>8765</code>. Change with <code>--port</code>.</li>
+  </ul>
+
+  <h2 id="embedded">9) Windows embedded Python notes</h2>
+  <p>If you’re using a <em>python_embedded</em> folder, Python ships with <code>pythonXY._pth</code> that disables <code>site-packages</code> by default.</p>
+  <ol>
+    <li>Click <strong>Enable site-packages</strong> in the top bar to add <code>import site</code> to that <code>._pth</code> file.</li>
+    <li>Click <strong>Check / install pip</strong> to verify pip (and bootstrap via <code>ensurepip</code> if available).</li>
+  </ol>
+  <p class="muted">If this is a read-only folder, you’ll need to grant write permissions or move the embedded Python to a writable location.</p>
+
+  <h2 id="tips">10) Tips, safety & troubleshooting</h2>
+  <h3>General tips</h3>
+  <ul>
+    <li><strong>Refresh</strong> package list anytime from the top or bottom bar.</li>
+    <li><strong>Don’t uninstall pip</strong>, <code>setuptools</code>, or <code>wheel</code> unless you know what you’re doing.</li>
+    <li>To keep environments stable, rely on <strong>snapshots</strong> before big changes.</li>
+  </ul>
+
+  <h3>Troubleshooting</h3>
+  <ul>
+    <li><strong>No packages appear</strong> — Make sure the page loaded fully (hard refresh with <kbd>Ctrl</kbd>+<kbd>F5</kbd>).
+      Verify you’re running the Python you expect (shown in the top bar).
+    </li>
+    <li><strong>PyPI search/versions fail</strong> — Check your internet connection and firewall; PyPI endpoints are required.</li>
+    <li><strong>pip missing</strong> — Use <em>Check / install pip</em>. If not available, install pip manually for your Python distribution.</li>
+    <li><strong>Embedded Python</strong> — Use <em>Enable site-packages</em> to add <code>import site</code>. Without this, packages and pip won’t behave normally.</li>
+    <li><strong>Permissions</strong> — If logging/snapshots can’t be written, set <code>BIRDFINGERS_DATA_DIR</code> to a writable folder and relaunch:
+<pre>BIRDFINGERS_DATA_DIR="C:\path\to\writable" python birdfingers_pkgmgr.py</pre>
+    </li>
+  </ul>
+
+  <h2 id="faq">11) FAQ</h2>
+  <p><strong>Q: Does the app change my system Python?</strong><br>
+  A: It acts on the <em>currently running</em> Python environment. To target a venv, activate it first, then run Birdfingers.</p>
+
+  <p><strong>Q: Can I manage multiple packages at once?</strong><br>
+  A: Yes. Select multiple packages (chips appear at the bottom). You can uninstall them all in one go. For installing versions, choose an <em>active</em> package chip, load versions, and install.</p>
+
+  <p><strong>Q: What exactly is a snapshot?</strong><br>
+  A: It’s a <code>pip freeze</code>-style list (<code>requirements.txt</code>) plus metadata (name, comment, created time). You can preview differences vs. current, restore from it later, or download/view it.</p>
+
+  <p><strong>Q: Can I use this offline?</strong><br>
+  A: Listing installed packages and restoring from a local snapshot is fine. PyPI searches and version lookups require internet.</p>
+
+  <p><strong>Q: Where do I see detailed logs?</strong><br>
+  A: In the data directory (see <em>Logs, snapshots & file locations</em>). The Output panel also streams live pip output.</p>
+
+  <footer>
+    <p class="muted">
+      © Birdfingers Package Manager — local web UI for Python packages.  
+      <a href="#top" style="color:inherit; text-decoration:none;">Back to top ↑</a>
+    </p>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Birdfingers Package Manager — Printable Guide</title>
+<style>
+  :root{
+    --bg:#0b1020; --card:#11162a; --fg:#e3ecff; --muted:#a6b0c3; --line:#233147;
+    --accent:#38bdf8; --ok:#34d399; --warn:#fbbf24; --danger:#f87171;
+  }
+  .light{
+    --bg:#ffffff; --card:#ffffff; --fg:#0b1220; --muted:#475569; --line:#e5e7eb;
+    --accent:#0ea5e9; --ok:#059669; --warn:#b45309; --danger:#ef4444;
+  }
+  html,body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui, Segoe UI, Roboto, Arial, sans-serif; }
+  header { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--line); z-index: 2; }
+  .container { max-width: 960px; margin: 0 auto; padding: 20px 16px; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .btn { padding:8px 12px; border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:8px; cursor:pointer; }
+  h1 { margin: 16px 0; font-size: 28px; }
+  h2 { margin: 28px 0 10px; font-size: 22px; }
+  h3 { margin: 18px 0 8px; font-size: 18px; }
+  .muted { color: var(--muted); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin:14px 0; }
+  figure { margin:16px 0; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card); }
+  figure img { display:block; width:100%; height:auto; }
+  figcaption { font-size:14px; color:var(--muted); padding:8px 10px; border-top:1px solid var(--line); }
+  pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  pre { background:#0b1228; color:#cfe8ff; border:1px solid #1f2a44; padding:10px; border-radius:8px; overflow:auto; }
+  .toc { padding:10px 12px; }
+  .toc a { color: var(--fg); text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  .grid { display:grid; gap:14px; }
+  @media(min-width: 840px){ .grid.two { grid-template-columns: 1fr 1fr; } }
+
+  /* Print-friendly adjustments */
+  @media print {
+    html { background: #fff !important; }
+    body { color: #000 !important; }
+    header, .print-controls { display: none !important; }
+    figure, .card { break-inside: avoid; }
+    .dark { /* force light for paper */ }
+    .light { }
+  }
+</style>
+<script>
+  // Dark by default, saved in localStorage
+  (function(){
+    try{
+      const saved = localStorage.getItem('bf_docs_theme_print');
+      if(saved === 'light'){
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      }else{
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    }catch(e){}
+  })();
+  function toggleTheme(){
+    const el = document.documentElement;
+    const isDark = el.classList.contains('dark');
+    if(isDark){
+      el.classList.remove('dark'); el.classList.add('light');
+      localStorage.setItem('bf_docs_theme_print','light');
+    }else{
+      el.classList.add('dark'); el.classList.remove('light');
+      localStorage.setItem('bf_docs_theme_print','dark');
+    }
+  }
+  function doPrint(){ window.print(); }
+</script>
+</head>
+<body>
+<header>
+  <div class="container row">
+    <h1 style="margin:0;">🐦 Birdfingers — Printable Guide</h1>
+    <div class="print-controls">
+      <button class="btn" onclick="toggleTheme()">🌗 Toggle theme</button>
+      <button class="btn" onclick="doPrint()">🖨️ Print / Save as PDF</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="card">
+    <strong>What is Birdfingers?</strong>
+    <p>Birdfingers is a local web UI to manage Python packages in virtual environments and Windows embedded Python. It supports listing/uninstalling packages, installing exact versions from PyPI, and snapshotting environments for preview/restore/diff.</p>
+  </div>
+
+  <div class="grid two">
+    <div class="card">
+      <h2 id="run">Run</h2>
+      <pre>python birdfingers_pkgmgr.py
+# opens http://127.0.0.1:8765/</pre>
+      <p>Use <code>--port</code> to change port. Activate your venv first to target it.</p>
+    </div>
+    <div class="card">
+      <h2 id="embedded">Embedded Python</h2>
+      <ol>
+        <li>Click <em>Enable site-packages</em> to add <code>import site</code> to <code>pythonXY._pth</code>.</li>
+        <li>Click <em>Check / install pip</em> to verify or bootstrap <code>pip</code>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <figure>
+    <img src="Packages.png" alt="Packages tab screenshot">
+    <figcaption>Packages: search, select, details, uninstall, load versions.</figcaption>
+  </figure>
+
+  <h2>Packages Tab</h2>
+  <ul>
+    <li><strong>Select</strong> → chips appear in the bottom bar (multi-select supported)</li>
+    <li><strong>Details</strong> → shows <code>pip show -f</code> output</li>
+    <li><strong>Uninstall</strong> → prompts, then removes the package</li>
+    <li><strong>Load versions</strong> → fetches version list from PyPI</li>
+  </ul>
+
+  <figure>
+    <img src="Install.png" alt="Install tab screenshot">
+    <figcaption>Install: search PyPI, then install latest or a specific version.</figcaption>
+  </figure>
+
+  <h2>Install Tab</h2>
+  <ul>
+    <li>Search PyPI by name; see summary, latest, and versions</li>
+    <li><strong>Install latest</strong> or <strong>Install selected</strong></li>
+    <li>Accepts <code>package==x.y.z</code> in the name field</li>
+  </ul>
+
+  <figure>
+    <img src="Snapshots.png" alt="Snapshots tab screenshot">
+    <figcaption>Snapshots: save, preview vs current, diff A↔B, restore, view/download/delete.</figcaption>
+  </figure>
+
+  <h2>Snapshots Tab</h2>
+  <ul>
+    <li><strong>Save snapshot</strong> with optional name/comment</li>
+    <li><strong>Preview</strong> shows install/uninstall plan vs current</li>
+    <li><strong>Diff A↔B</strong> between two snapshots</li>
+    <li><strong>Restore</strong> runs <code>pip install -r</code> snapshot requirements</li>
+  </ul>
+
+  <h2>Bottom Bar (Actions & Output)</h2>
+  <ul>
+    <li>Chips: click to set **active** package; <kbd>×</kbd> to remove</li>
+    <li>Buttons: **Show details**, **Uninstall selected**, **Load versions**, **Install version**</li>
+    <li>Output: live pip logs with job id/state</li>
+  </ul>
+
+  <h2>Files & Logs</h2>
+  <ul>
+    <li>Set <code>BIRDFINGERS_DATA_DIR</code> to choose storage location</li>
+    <li>Logs: <code>birdfingers.log</code> (text), <code>birdfingers_audit.jsonl</code> (JSONL)</li>
+    <li>Snapshots folder: <code>birdfingers_snapshots/</code></li>
+  </ul>
+
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li><strong>No packages</strong> → hard refresh (Ctrl+F5), confirm Python shown in top bar</li>
+    <li><strong>PyPI errors</strong> → check internet/firewall</li>
+    <li><strong>pip missing</strong> → use “Check / install pip”</li>
+    <li><strong>Permissions</strong> → set <code>BIRDFINGERS_DATA_DIR</code> to writable path</li>
+  </ul>
+
+  <p class="muted" style="margin-top:24px;">© Birdfingers Package Manager — Print this page to PDF for easy sharing.</p>
+</main>
+</body>
+</html>

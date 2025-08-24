@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Birdfingers — Start & Docs</title>
+<style>
+  :root{
+    --bg:#0b1020; --card:#11162a; --fg:#e3ecff; --muted:#a6b0c3; --line:#233147;
+    --accent:#38bdf8; --ok:#34d399; --warn:#fbbf24; --danger:#f87171; --shadow:0 10px 30px rgba(0,0,0,.3);
+  }
+  .light{
+    --bg:#f8fafc; --card:#ffffff; --fg:#0f172a; --muted:#475569; --line:#e5e7eb;
+    --accent:#0ea5e9; --ok:#059669; --warn:#b45309; --danger:#ef4444; --shadow:0 10px 30px rgba(0,0,0,.08);
+  }
+  html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui, Segoe UI, Roboto, Arial, sans-serif;}
+  header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:2;}
+  .container{max-width:980px;margin:0 auto;padding:18px 16px 48px;}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  h1{margin:10px 0 0 0;font-size:26px}
+  .btn{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer;box-shadow:var(--shadow)}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.ghost{background:transparent}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+  .muted{color:var(--muted)}
+  input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
+  a{color:inherit}
+  .grid{display:grid;gap:16px}
+  @media(min-width:860px){.grid.two{grid-template-columns:1fr 1fr}}
+  .status{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+  .dot{width:10px;height:10px;border-radius:999px;background:var(--warn)}
+  .dot.ok{background:var(--ok)}
+  .dot.err{background:var(--danger)}
+  figure{margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  figure img{display:block;width:100%;height:auto}
+  figcaption{font-size:13px;color:var(--muted);padding:8px 10px;border-top:1px solid var(--line);background:rgba(255,255,255,.02)}
+</style>
+<script>
+  // Dark by default; persist choice
+  (function(){
+    try{
+      const saved = localStorage.getItem('bf_index_theme');
+      if(saved === 'light'){ document.documentElement.classList.remove('dark'); document.documentElement.classList.add('light'); }
+      else { document.documentElement.classList.add('dark'); document.documentElement.classList.remove('light'); }
+    }catch(e){}
+  })();
+  function toggleTheme(){
+    const el = document.documentElement;
+    const dark = el.classList.contains('dark');
+    if(dark){ el.classList.remove('dark'); el.classList.add('light'); localStorage.setItem('bf_index_theme','light'); }
+    else { el.classList.add('dark'); el.classList.remove('light'); localStorage.setItem('bf_index_theme','dark'); }
+  }
+
+  async function checkStatus(){
+    const port = document.getElementById('port').value.trim() || '8765';
+    const base = `http://127.0.0.1:${port}`;
+    const status = document.getElementById('status');
+    const mode = document.getElementById('mode');
+    const py = document.getElementById('py');
+    status.className = 'dot'; // yellow while checking
+    mode.textContent = '—'; py.textContent = '—';
+    try{
+      const r = await fetch(`${base}/api/info`, {cache:'no-store'});
+      if(!r.ok) throw new Error('not ok');
+      const info = await r.json();
+      status.className = 'dot ok';
+      mode.textContent = info.mode || 'unknown';
+      py.textContent = info.python || '';
+    }catch(e){
+      status.className = 'dot err';
+      mode.textContent = 'not running';
+      py.textContent = '';
+    }
+  }
+  function openApp(){
+    const port = document.getElementById('port').value.trim() || '8765';
+    window.open(`http://127.0.0.1:${port}/`, '_blank');
+  }
+  window.addEventListener('load', () => {
+    const savedPort = localStorage.getItem('bf_index_port') || '8765';
+    document.getElementById('port').value = savedPort;
+    checkStatus();
+  });
+  function savePort(el){ localStorage.setItem('bf_index_port', el.value.trim()); }
+</script>
+</head>
+<body>
+<header>
+  <div class="container row" style="justify-content:space-between;">
+    <div class="row">
+      <h1>🐦 Birdfingers</h1>
+      <span class="muted">Start page & documentation</span>
+    </div>
+    <div class="row">
+      <button class="btn" onclick="toggleTheme()">🌗 Toggle theme</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="grid two">
+    <div class="card">
+      <h2 style="margin-top:6px">Launch the app</h2>
+      <p class="muted">Run <code>python birdfingers_pkgmgr.py</code> (or your existing .bat) first, then open the UI.</p>
+      <div class="row" style="gap:10px;margin:8px 0 10px;">
+        <label>Port:</label>
+        <input id="port" type="text" style="width:96px" value="8765" oninput="savePort(this)">
+        <button class="btn" onclick="checkStatus()">Check status</button>
+        <button class="btn primary" onclick="openApp()">Open app</button>
+      </div>
+      <div class="row" style="gap:10px;">
+        <span class="status"><span id="status" class="dot"></span> <span>Server</span></span>
+        <span class="muted">Mode:</span> <strong id="mode">—</strong>
+        <span class="muted">Python:</span> <strong id="py">—</strong>
+      </div>
+      <p class="muted" style="margin-top:10px;">Tip: If status is red, make sure your environment is active and the app is running, then click <em>Open app</em>.</p>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:6px">Documentation</h2>
+      <ul>
+        <li><a class="btn" href="documentation/Birdfingers_Docs.html" target="_blank">📘 User Guide (with screenshots)</a></li>
+        <li><a class="btn" href="documentation/Birdfingers_Docs_Print.html" target="_blank">🖨️ Printable Guide (save as PDF)</a></li>
+        <li><a class="btn ghost" href="README.md" target="_blank">📄 README.md</a> <span class="muted"> (raw markdown in browser)</span></li>
+      </ul>
+      <p class="muted">Docs are in <code>documentation/</code>. Screenshots expected: <code>Packages.png</code>, <code>Install.png</code>, <code>Snapshots.png</code>.</p>
+    </div>
+  </div>
+
+  <div class="grid two" style="margin-top:14px;">
+    <figure>
+      <img src="documentation/Packages.png" alt="Packages tab">
+      <figcaption>Packages — search, select, details, uninstall, versions.</figcaption>
+    </figure>
+    <figure>
+      <img src="documentation/Install.png" alt="Install tab">
+      <figcaption>Install — search PyPI, install latest or exact version.</figcaption>
+    </figure>
+  </div>
+  <div class="grid" style="margin-top:14px;">
+    <figure>
+      <img src="documentation/Snapshots.png" alt="Snapshots tab">
+      <figcaption>Snapshots — save, preview, diff A↔B, restore, view, download, delete.</figcaption>
+    </figure>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h3>Folder layout (recommended)</h3>
+    <pre>
+main-folder/
+├─ birdfingers_pkgmgr.py
+├─ README.md
+├─ index.html          ← (this file)
+└─ documentation/
+   ├─ Birdfingers_Docs.html
+   ├─ Birdfingers_Docs_Print.html
+   ├─ Packages.png
+   ├─ Install.png
+   └─ Snapshots.png
+    </pre>
+    <p class="muted">If you change names or paths, update the links in <code>index.html</code>.</p>
+  </div>
+</main>
+</body>
+</html>
