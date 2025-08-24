@@ -6,7 +6,8 @@ A friendly, local **web UI** for managing Python packages in **virtual environme
 - **Works in venv _and_ python_embedded** (with helpers to enable `site-packages` and bootstrap `pip`).
 - **Snapshots**: freeze, preview vs current, diff A↔B, restore.
 
----
+<img width="1897" height="926" alt="Packages" src="https://github.com/user-attachments/assets/35b530f8-7eb7-459a-93ab-f555f6d6af60" />
+
 
 ## ✨ Features
 
@@ -40,6 +41,10 @@ A friendly, local **web UI** for managing Python packages in **virtual environme
 - Python **3.8+**
 - Internet access for **PyPI** searches/version lists
 - For embedded Python: write access to the folder if you want to enable `site-packages`
+
+---
+
+Unzip into your embeeded python folder or venv (where the python executable is located) and open index.html for help and also to launch the package manager.
 
 ---
 
