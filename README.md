@@ -44,7 +44,7 @@ A friendly, local **web UI** for managing Python packages in **virtual environme
 
 ---
 
-Unzip into your embeeded python folder or venv (where the python executable is located) and open index.html for help and also to launch the package manager.
+Unzip into your system Python location, embedded Python folder or venv (where the Python executable is located) and open index.html for help and also to launch the package manager.
 
 ---
 
