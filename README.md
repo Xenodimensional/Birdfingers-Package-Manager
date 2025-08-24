@@ -44,11 +44,11 @@ A friendly, local **web UI** for managing Python packages in **virtual environme
 
 ---
 
+## 🚀 Run
+
 Unzip into your system Python location, embedded Python folder or venv (where the Python executable is located) and open index.html for help and also to launch the package manager.
 
----
-
-## 🚀 Run
+or
 
 Place `birdfingers_pkgmgr.py` next to `python.exe` (or run it with your preferred Python): Use the 'birdfingers.bat' file to launch on Windows.
 
