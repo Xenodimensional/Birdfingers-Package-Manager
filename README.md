@@ -3,7 +3,7 @@
 A friendly, local **web UI** for managing Python packages in **virtual environments** and **Windows embedded Python** (`python_embedded`). List installed packages, inspect details, uninstall in batches, install exact versions from PyPI, and create **snapshots** you can preview, diff, and restore.
 
 - **Zero extra deps** — runs with the Python stdlib.
-- **Works in venv _and_ python_embedded** (with helpers to enable `site-packages` and bootstrap `pip`).
+- **Works in venv _and_ python_embedded _and_ system Python** (with helpers to enable `site-packages` and bootstrap `pip`).
 - **Snapshots**: freeze, preview vs current, diff A↔B, restore.
 
 <img width="1897" height="926" alt="Packages" src="https://github.com/user-attachments/assets/35b530f8-7eb7-459a-93ab-f555f6d6af60" />
